@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <!--所有ext里面的css样式-->
+  <link href="../css/ext-all.css" rel="stylesheet">
+  <!--font-awesome 字体图标库，现如今最流行的-->
+  <link href="../css/font-awesome/css/font-awesome.css" rel="stylesheet">
+  <!--fc-all.css 根据具体需求写的css-->
+  <link href="../css/fc-all.css" rel="stylesheet">
+  <!--清除文本的css样式库-->
+  <link href="../css/ClearButton.css" rel="stylesheet">
+</head>
+<body class="xn_body">
+<div class="xn_nowpath"></div>
+<div class="xn_section_wrap">
+  <div id="studentFormBox" class="xn_search_form"></div>
+</div>
+<div class="xn_section_wrap">
+  <div class="xn_section_title">
+    <span class="icon_wrap"><i class="icon-th"></i></span>
+    <span class="xn_title_name">学员列表</span>
+  </div>
+  <div id="studentBox"></div>
+</div>
+</body>
+<!--ext本身的加载速度慢，所以后续需要用到jq里面的方法-->
+<script src="../js/jquery-1.8.3.min.js" type="text/javascript"></script>
+<!--独自封装的js库-->
+<script src="../js/basicParameter.js" type="text/javascript"></script>
+<!--ext-all.js ext自身的js库-->
+<script src="../js/ext-all.js" type="text/javascript"></script>
+<!--自己封装的js组件库-->
+<script src="../js/basicExtModule.js" type="text/javascript"></script>
+<!--分页栏js库-->
+<script src="../js/PagingToolBar.js" type="text/javascript"></script>
+<!--工具库-->
+<script src="../js/tools.js" type="text/javascript"></script>
+<!--清除文本的js库-->
+<script src="../js/ClearButton.js" type="text/javascript"></script>
+<script type="text/javascript">
+  var GLOBAL = GLOBAL || {};
+  Ext.onReady(function () {
+    //搜索框部分
+    GLOBAL.studentForm = Ext.create("Ext.form.Panel",{
+      renderTo:"studentFormBox",
+      layout:"hbox",
+      items:[
+        new Ext.custom.textfield({
+          itemId:"userName",
+          emptyText:"用户名",
+          margin:10
+        }),
+        new Ext.custom.textfield({
+          itemId:"email",
+          emptyText:"邮箱",
+          margin:10
+        }),
+        new Ext.custom.textfield({
+          itemId:"phone",
+          emptyText:"手机号",
+          margin:10
+        }),{
+          xtype:"button",
+          text:"查询",
+          width:100,
+          height:34,
+          style:"background:green",
+          margin:10,
+          handler:function () {
+
+          }
+        }
+      ]
+    });
+    //学员列表部分
+      //创建学员仓库
+    GLOBAL.studentStore = Ext.create("Ext.data.Store",{
+      fields:["userName","email","phone","createAt","isstate","tokenId"]
+    });
+      //创建分页栏
+    GLOBAL.studentBar = Ext.create("PagingToolBar",{
+      onChange:function (g,pageFirst,pageSize) {
+        var pageStart = pageFirst/pageSize+1;
+        studentList(pageStart,pageFirst)
+      }
+    });
+      //创建学院列表
+    Ext.create("Ext.grid.Panel",{
+      renderTo:"studentBox",
+      bbar:GLOBAL.studentBar,
+      store:GLOBAL.studentStore,
+      minHeight:BPR.gridMinHeight,
+      columns:[
+        {header:"用户名",width:150,dataIndex:"userName"},
+        {header:"邮箱",width:150,dataIndex:"email",flex:1},
+        {header:"手机号",width:150,dataIndex:"phone"},
+        {header:"注册日期",width:150,dataIndex:"createAt"},
+        {header:"状态",width:150,dataIndex:"isstate",
+          renderer:function (value,cellMeta,record) {
+            if (value){
+              return "<a class='xn_tablea' style='color: red'>已冻结</a>"
+            }else{
+              return "正常"
+            }
+          }
+        },
+        {header:"操作",width:150,dataIndex:"tokenId",
+          renderer:function (value,cellMeta,record) {
+            var str = record.data.isstate?"解冻":"冻结";
+            return "<a onclick='lockStatus("+value+")' class='xn_tablea'>"+str+"</a>"
+          }
+        }
+      ]
+    });
+    studentList()
+  });
+  function studentList(pageStart,pageFirst) {
+    $.ajax({
+      url:"/Handler/AdminHandler.ashx?action=usershow",
+      type:"post",
+      dataType:"json",
+      async:false,
+      data: {
+        userName: GLOBAL.studentForm.down("#userName").getValue(),
+        email:GLOBAL.studentForm.down("#email").getValue(),
+        phone:GLOBAL.studentForm.down("#phone").getValue(),
+        pageStart:pageStart?pageStart:1
+      }
+    }).done(function (result) {
+      console.log(result);
+      GLOBAL.studentBar.setPageSize(result.data.pageSize);
+      GLOBAL.studentBar.loadPage(pageFirst?pageFirst:0,result.data.count);
+      GLOBAL.studentStore.loadData(result.data.list);
+    })
+  }
+  function lockStatus(id) {
+    $.ajax({
+      url:"/Handler/AdminHandler.ashx?action=lockuser",
+      type:"get",
+      dataType:"json",
+      async:false,
+      data:{
+        tokenId:id
+      }
+    }).done(function (result) {
+      studentList();
+      Ext.Msg.alert("提示",result.success)
+    })
+  }
+</script>
+</html>

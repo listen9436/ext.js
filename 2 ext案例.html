@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ext.js演示</title>
+    <!--所有ext里面的css样式-->
+    <link href="Ext/css/ext-all.css" rel="stylesheet">
+    <!--font-awesome 字体图标库，现如今最流行的-->
+    <link href="Ext/css/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <!--fc-all.css 根据具体需求写的css-->
+    <link href="Ext/css/fc-all.css" rel="stylesheet">
+    <!--清除文本的css样式库-->
+    <link href="Ext/css/ClearButton.css" rel="stylesheet">
+</head>
+<body class="xn-body"> <!--xn-body内容两边加填充-->
+<div id="panelBox"></div>   <!-- 这块定义的名称必须用ID引导，class会出错-->
+<!--form表单-->
+<div class="xn_section_wrap">
+    <div class="xn_section_title">
+        <span class="icon_wrap"><i class="icon-th"></i></span>
+        <span class="xn_title_name">搜索框示例</span>
+    </div>
+    <div id="formBox" class="xn_search_form">  <!--xn_search_form让它的高变大的-->
+        <div class="xn_btn xn_btn_primary" style="float: right;margin: 10px"><i class="icon-plus"></i>添加</div>
+    </div>
+</div>
+<!--表格示例-->
+<div class="xn_section_wrap">
+    <div class="xn_section_title">
+        <span class="icon_wrap"><i class="icon-plus"></i></span>
+        <span class="xn_title_name">表格示例</span>
+    </div>
+    <div id="tableBox"></div>
+</div>
+<!--弹窗示例-->
+<div class="xn_section_wrap">
+    <div class="xn_section_title">
+        <span class="icon_wrap"><i class="icon-th"></i></span>
+        <span class="xn_title_name">弹出框示例</span>
+    </div>
+    <div style="margin: 20px">
+        <button class="xn_btn xn_btn_primary" onclick="extAlert()">弹出框</button>
+        <button class="xn_btn xn_btn_success" onclick="basicWin()">输入框</button>
+        <button class="xn_btn xn_btn_inverse" onclick="fileWin()">上传文件</button>
+    </div>
+</div>
+
+</body>
+<!--ext本身的加载速度慢，所以后续需要用到jq里面的方法-->
+<script src="Ext/js/jquery-1.8.3.min.js" type="text/javascript"></script>
+<!--独自封装的js库-->
+<script src="Ext/js/basicParameter.js" type="text/javascript"></script>
+<!--ext-all.js ext自身的js库-->
+<script src="Ext/js/ext-all.js" type="text/javascript"></script>
+<!--自己封装的js组件库-->
+<script src="Ext/js/basicExtModule.js" type="text/javascript"></script>
+<!--分页栏js库-->
+<script src="Ext/js/PagingToolBar.js" type="text/javascript"></script>
+<!--工具库-->
+<script src="Ext/js/tools.js" type="text/javascript"></script>
+<!--清除文本的js库-->
+<script src="Ext/js/ClearButton.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var GLOBAL = GLOBAL || {}
+        //ext中的预加载
+        Ext.onReady(function () {
+            //解决窗口缩小表格变形的问题
+            Ext.EventManager.onWindowResize(function () {
+               GLOBAL.grid.getView().refresh()
+            });
+            //panel示例部分
+            Ext.create("Ext.panel.Panel",{//创建一个panel面板,第二个P必须大写
+                title:"顶部panel",
+                margin:"10",
+                renderTo:"panelBox", //renderTo把创建出来的东西加入到对应的盒子当中
+                items:[{        //创建子类
+                    title:"上部panel",
+                    margin:"10",
+                    layout:"table",  //layout布局方式。总共有12中,hbox/table水平分布
+                    items:[{
+                        html:"左边的panel",
+                        margin:"10"
+                    },{
+                        html:"右边的panel",
+                        margin:"10"
+                    }]
+                },{
+                    title:"下面的panel",
+                    html:"<p>中间的内容</p>",
+                    margin:"10"
+                }]
+            });
+
+            //form示例部分
+            GLOBAL.storeData01 = [
+                ["text1","value1"],
+                ["text2","value2"],
+                ["text3","value3"],
+                ["text4","value4"],
+                ["text5","value5"]
+            ];
+            GLOBAL.storeData02 = [
+                ["text6","value6"],
+                ["text7","value7"],
+                ["text8","value8"],
+                ["text9","value9"],
+                ["text10","value10"]
+            ];
+            var isTrue = false;
+              //创建数据仓库
+            GLOBAL.dataStore = Ext.create("Ext.data.Store",{
+               fields:["val","name"] //固定的数组格式
+            });
+            GLOBAL.dataStore.loadData(GLOBAL.storeData01);
+            GLOBAL.formData = Ext.create("Ext.form.Panel", {
+                renderTo:"formBox",
+                xtype:"panel",     //定义面板类型
+                items:[{
+                    layout:"hbox",
+                    items:[ //new一个对象时，不需要大括号
+                        new Ext.custom.minitextfield({ //加mini是小型
+                            itemId:"userName",
+                            emptyText:"用户名",  //相当于placeholder
+                            margin:"10"
+                        }),
+                        new Ext.custom.textfield({ //标准
+                            itemId:"password",
+                            emptyText:"密码",
+                            margin:"10"
+                        }),
+                        new Ext.custom.middletextfield({  //中
+                            itemId:"email",
+                            emptyText:"邮箱",
+                            margin:"10"
+                        })
+                    ]
+
+                },{
+                    margin:"10",
+                    items:[
+                            new Ext.custom.bigtextfield({  //大
+                                itemId:"code",
+                                emptyText:"验证码"
+                            })
+                    ]
+                },{
+                    layout:"hbox",
+                    items:[
+                            new Ext.custom.basicCombo({  //相当于下拉框
+                                fieldLabel:"权限选择",  //相当于label标签里面的文字
+                                valueField:"name",   //获取文本域的值
+                                displayField:"val", // 在界面的显示值
+                                labelAlign:"left",  //对齐方式
+                                store:GLOBAL.dataStore, //加载数据(仓库)
+                                plugins:["clearbutton"]  //清除文本域(会input里有个叉号)
+                            }),{
+                            xtype:"button",   //定义button类型
+                            width:100,        //宽高不能加引号
+                            height:34,
+                            style:"background:green",
+                            text:"更改数据",   //文本框
+                            handler:function () {
+                                //点击后执行的事件
+//                                GLOBAL.dataStore.loadData(GLOBAL.storeData02);
+                                //做成tab切换，来回切换
+                                if (isTrue){
+                                    GLOBAL.dataStore.loadData(GLOBAL.storeData02);
+                                    isTrue = false;
+                                }else {
+                                    GLOBAL.dataStore.loadData(GLOBAL.storeData01);
+                                    isTrue = true;
+                                }
+                            }
+                        }
+                    ]
+                },{
+                    xtype:"button",
+                    width:100,
+                    height:34,
+                    margin:10,
+                    style:"background:green",
+                    text:"获取输入值",
+                    handler:function () {
+                        console.log(GLOBAL.formData.down("#userName").getValue());
+                    }
+                },{
+                    xtype:"button",
+                    width:100,
+                    height:34,
+                    margin:10,
+                    text:"设置值",
+                    handler:function () {
+                        GLOBAL.formData.down("#userName").setValue("啦啦啦");
+                    }
+                }]
+            });
+
+            //表格示例开始
+            GLOBAL.tableDatea = {
+                "pageStart":0,  //页数
+                "pageSize":10, //一页显示的条数
+                "count":15,   //总条数
+                "list0":[{
+                    "title":"html基础1",
+                    "nomber":"yysd4568",
+                    "courseId":"1",
+                    "classify":"前端",
+                    "publishAt":"2014/05/09",
+                    "createAt":"2014/05/09",
+                    "status":2
+                },{
+                    "title":"html基础2",
+                    "nomber":"yysd4568",
+                    "courseId":"2",
+                    "classify":"前端",
+                    "publishAt":"2014/05/09",
+                    "createAt":"2014/05/09",
+                    "status":2
+                },{
+                    "title":"html基础3",
+                    "nomber":"yysd4568",
+                    "courseId":"3",
+                    "classify":"前端",
+                    "publishAt":"2014/05/09",
+                    "createAt":"2014/05/09",
+                    "status":2
+                },{
+                    "title":"html基础4",
+                    "nomber":"yysd4568",
+                    "courseId":"4",
+                    "classify":"前端",
+                    "publishAt":"2014/05/09",
+                    "createAt":"2014/05/09",
+                    "status":2
+                },{
+                    "title":"html基础5",
+                    "nomber":"yysd4568",
+                    "courseId":"5",
+                    "classify":"前端",
+                    "publishAt":"2014/05/09",
+                    "createAt":"2014/05/09",
+                    "status":2
+                },{
+                    "title":"html基础6",
+                    "nomber":"yysd4568",
+                    "courseId":"6",
+                    "classify":"前端",
+                    "publishAt":"2014/05/09",
+                    "createAt":"2014/05/09",
+                    "status":2
+                },{
+                    "title":"html基础7",
+                    "nomber":"yysd4568",
+                    "courseId":"7",
+                    "classify":"前端",
+                    "publishAt":"2014/05/09",
+                    "createAt":"2014/05/09",
+                    "status":2
+                },{
+                    "title":"html基础8",
+                    "nomber":"yysd4568",
+                    "courseId":"8",
+                    "classify":"前端",
+                    "publishAt":"2014/05/09",
+                    "createAt":"2014/05/09",
+                    "status":2
+                },{
+                    "title":"html基础9",
+                    "nomber":"yysd4568",
+                    "courseId":"9",
+                    "classify":"前端",
+                    "publishAt":"2014/05/09",
+                    "createAt":"2014/05/09",
+                    "status":2
+                },{
+                    "title":"html基础10",
+                    "nomber":"yysd4568",
+                    "courseId":"10",
+                    "classify":"前端",
+                    "publishAt":"2014/05/09",
+                    "createAt":"2014/05/09",
+                    "status":2
+                }],
+                "list10":[{
+                    "title":"html基础11",
+                    "nomber":"yysd4568",
+                    "courseId":"11",
+                    "classify":"前端",
+                    "publishAt":"2014/05/09",
+                    "createAt":"2014/05/09",
+                    "status":2
+                },{
+                    "title":"html基础12",
+                    "nomber":"yysd4568",
+                    "courseId":"12",
+                    "classify":"前端",
+                    "publishAt":"2014/05/09",
+                    "createAt":"2014/05/09",
+                    "status":2
+                },{
+                    "title":"html基础13",
+                    "nomber":"yysd4568",
+                    "courseId":"13",
+                    "classify":"前端",
+                    "publishAt":"2014/05/09",
+                    "createAt":"2014/05/09",
+                    "status":2
+                },{
+                    "title":"html基础14",
+                    "nomber":"yysd4568",
+                    "courseId":"14",
+                    "classify":"前端",
+                    "publishAt":"2014/05/09",
+                    "createAt":"2014/05/09",
+                    "status":2
+                },{
+                    "title":"html基础15",
+                    "nomber":"yysd4568",
+                    "courseId":"15",
+                    "classify":"前端",
+                    "publishAt":"2014/05/09",
+                    "createAt":"2014/05/09",
+                    "status":2
+                }]
+            };
+              //创建分页栏
+            GLOBAL.pageBar = Ext.create("PagingToolBar",{
+               onChange:function (g,pageStart,pageSize) {  //onChange进行页数切换
+                   // g 代表获取表格里面的所有数据
+                   // pageStart  页数 或 每一页第一条数据的下标
+                   // pageSize   每一页显示的条数
+                   console.log(this);
+                   console.log(arguments); //打印所有的参数
+                   getList(pageStart)
+               }
+            });
+              //创建数据仓库
+            GLOBAL.tableStore = Ext.create("Ext.data.Store",{
+                fields:["title","number","courseId","classify","publishAt","createAt","status"]
+            });
+              //创建表格
+            GLOBAL.grid = Ext.create("Ext.grid.Panel",{
+                renderTo:"tableBox",
+                id:"ID",
+                minHeight:BPR.gridMinHeight, //后台写好的等于300
+                store:GLOBAL.tableStore,
+                bbar:GLOBAL.pageBar, //tbar 分页栏在上方显示   bbar 在下方显示
+                columns:[
+                    {"header":"课程名称",width:150,dataIndex:"title"},
+                    {"header":"课程代号",width:150,dataIndex:"number",flex:1},
+                    {"header":"所属分类",width:150,dataIndex:"classify"},
+                    {"header":"状态",width:150,dataIndex:"status"},
+                    {"header":"编辑日期",width:150,dataIndex:"createAt"},
+                    {"header":"操作",width:200,dataIndex:"courseId",
+                        renderer:function (value,cellmeta,record) {  // renderer重置表格数据
+                            //value 获取到单元格的值
+                            //cellmeta  获取到对应单元格的信息
+                            //record 获取到整行记录
+                            console.log(this)
+                            console.log(arguments)
+                            return "<a class='xn_tablea'>编辑</a><a class='xn_tablea'>删除</a>"
+                        }
+                    }
+                ]
+            });
+            getList();
+        });
+
+    function getList(pageStart) {
+        //setPageSize 获取每页显示的条数
+        GLOBAL.pageBar.setPageSize(GLOBAL.tableDatea.pageSize);
+        var pageStart = pageStart?pageStart:0; //如果pageStart存在，就等于pageStart,否则等于第一页
+        //如果直接在下面写的话，，因为pageStart没有定义，他初始的值是undefined。
+        //所以把他提出来，var 先给他赋值（不要等点的时候才赋值），就可以直接出来了，
+        //后台是取数据是根据每一页第一条数据的下标去取数据的，，所以pageStart 是0，
+        GLOBAL.pageBar.loadPage(pageStart,GLOBAL.tableDatea.count);
+        //loadPage  加载"当前页"的数据，GLOBAL.tableDatea.count 获取他的总条数
+        GLOBAL.tableStore.loadData(GLOBAL.tableDatea["list"+pageStart])
+    }
+    //弹出框
+    function extAlert() {
+        Ext.Msg.alert("弹出框","erererr")  //标题，，内容
+    }
+    //window框
+    function basicWin() {
+        new Ext.custom.basicWindow({
+            title:"添加",
+            width:500,
+            height:320,
+            items:[
+                    new Ext.custom.middletextfield({
+                        itemId:"userName",
+                        margin:"30 10 10 60",
+                        fieldLabel:"用户名",           //相当于label标签里面的文字
+                        beforeLabelTextTpl:required   //小红星
+                    }),new Ext.custom.middletextfield({
+                        itemId:"name",
+                        margin:"10 10 10 60",
+                        fieldLabel:"姓名",
+                        beforeLabelTextTpl:required
+                }),new Ext.custom.middletextfield({
+                        itemId:"phone",
+                        margin:"10 10 10 60",
+                        fieldLabel:"手机号",
+                        beforeLabelTextTpl:required
+                }),new Ext.custom.basicCombo({
+                    fieldLabel:"权限选择",
+                    margin:"10 10 10 60",
+                    valueField:"",   //获取文本域的值
+                    displayField:"", //在界面的显示值
+                    store:"",
+                    itemId:"power",
+                    width:370
+                }),{
+                    xtype:"button",
+                    width:100,
+                    height:34,
+                    margin:"0 30 0 130",
+                    style:"background:blue",
+                    text:"确定",
+                    handler:function () {
+
+                    }
+                },{
+                    xtype:"button",
+                    width:100,
+                    height:34,
+                    margin:10,
+                    style:"background:",
+                    text:"取消",
+                    handler:function () {
+                        
+                    }
+                }
+            ]
+        }).show()
+    }
+    //上传文件框
+    function fileWin() {
+        new Ext.custom.uploadFileWin({
+            title:"上传",
+            customMaxSize:1024*1024*1024,   //最大上传限制
+            customFilefieldLabel:"附件", //所显示的文件
+            customUrl:"",  //上传文件路径
+            cbFn:function () {
+                //执行点击函数
+            }
+        }).show()
+    }
+</script>
+</html>

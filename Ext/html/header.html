@@ -1,0 +1,419 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <!--所有ext里面的css样式-->
+  <link href="../css/ext-all.css" rel="stylesheet">
+  <!--font-awesome 字体图标库，现如今最流行的-->
+  <link href="../css/font-awesome/css/font-awesome.css" rel="stylesheet">
+  <!--fc-all.css 根据具体需求写的css-->
+  <link href="../css/fc-all.css" rel="stylesheet">
+  <!--清除文本的css样式库-->
+  <link href="../css/ClearButton.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: linear-gradient(to right, #242f66, #4d5c9d);
+      overflow: hidden;
+    }
+    .header {
+      width: 100%;
+      height: 45px;
+      background: #333333;
+    }
+    .header_content {
+      width: 1200px;
+      height: 45px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .logo {
+      cursor: pointer;
+      float: left;
+    }
+    .header_content ul {
+      float: right;
+    }
+    .header_content ul li {
+      list-style: none;
+      float: left;
+      color: #ccc;
+      margin-left: 30px;
+      font-size: 12px;
+      line-height: 45px;
+      cursor: pointer;
+    }
+    .header_content ul li:hover {
+      color: #fff;
+    }
+    .icon_last {
+      display: block;
+      width: 45px;
+      height: 45px;
+      float: right;
+      margin-left: 5px;
+    }
+    .icon_last img {
+      width: 100%;
+    }
+    .nav {
+      width: 100%;
+      height: 45px;
+      background: url("../Images/body_bg.jpg");
+      position: relative;
+      z-index: 99;
+    }
+    .nav_content {
+      width: 1080px;
+      height: 45px;
+      margin: 0 auto;
+      padding-left: 120px;
+    }
+    .nav_content ul li {
+      list-style: none;
+      float: left;
+      width: 100px;
+      height: 45px;
+      padding: 0 15px;
+      line-height: 45px;
+      color: #fff;
+      text-align: center;
+      font-size: 14px;
+      cursor: pointer;
+      position: relative;
+    }
+    .left {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      transform: rotate(135deg);
+      opacity: 0;
+      transition: all 0.5s ease;
+    }
+    .right {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      transform: rotate(-45deg);
+      opacity: 0;
+      transition: all 0.3s linear;
+    }
+    .nav_content ul li .active1 {
+      opacity: 1;
+      left: 3px;
+      top: 3px;
+    }
+    .nav_content ul li .active2 {
+      opacity: 1;
+      right: 3px;
+      bottom: 3px;
+    }
+    .none {
+      position: absolute;
+      left: 0;
+      top: 45px;
+      width: 100%;
+      height: 130px;
+      background: #fff;
+      display: none;
+      z-index: 99;
+    }
+    .none_content {
+      width: 1100px;
+      margin: 0 auto;
+      padding: 40px 0 0 100px;
+    }
+    .none_content a {
+      display: block;
+      width: 190px;
+      height: 40px;
+      margin-right: 30px;
+      border: 1px solid #4d5c9d;
+      float: left;
+      padding-left: 40px;
+      line-height: 40px;
+      font-size: 14px;
+      color: #4d5c9d;
+      cursor: pointer;
+    }
+    .none_content a:hover {
+      background: #4d5c9d;
+      color: #fff;
+      transition: all 0.5s ease;
+    }
+    .none_content a span {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="header">
+  <div class="header_content">
+    <img class="logo" src="../Images/back_logo.png">
+    <ul>
+      <li><span class="icon-github-alt"></span> 卓新思创</li>
+      <li><span class="icon-comment"></span> 在线客服</li>
+      <li><span class="icon-book"></span> 常见问题</li>
+      <li id="checkPwd"><span class="icon-lock"></span> 安全中心</li>
+      <li id="quit"><span class=" icon-signout"></span> 退出</li>
+      <li><span id="userName">小默默</span><a class="icon_last"><img src="../Images/touxiang.jpg"></a></li>
+    </ul>
+  </div>
+</div>
+<div class="nav">
+  <div class="nav_content">
+    <ul>
+      <li><span class="icon-user"></span> 用户管理<a class="left icon-chevron-down"></a><a
+        class="right icon-chevron-down"></a></li>
+      <li><span class="icon-book"></span> 课程管理<a class="left icon-chevron-down"></a><a
+        class="right icon-chevron-down"></a></li>
+      <li><span class="icon-tasks"></span> 统计报表<a class="left icon-chevron-down"></a><a
+        class="right icon-chevron-down"></a></li>
+      <li><span class="icon-folder-close"></span> 其他管理<a class="left icon-chevron-down"></a><a
+        class="right icon-chevron-down"></a></li>
+      <li><span class="icon-bookmark"></span> 数据字典<a class="left icon-chevron-down"></a><a
+        class="right icon-chevron-down"></a></li>
+      <li><span class="icon-cog"></span> 系统维护<a class="left icon-chevron-down"></a><a
+        class="right icon-chevron-down"></a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="none">
+      <div class="none_content">
+        <a iLink="adminList.html" id="adminList"><span class="icon-user"></span>系统人员</a>
+        <a iLink="studentList.html" id="studentList"><span class="icon-group"></span>学员管理</a>
+        <a iLink="aaa.html" id="aaa"><span class="icon-legal"></span>权限管理</a>
+      </div>
+    </div>
+    <div class="none">
+      <div class="none_content">
+        <a iLink="courseList.html" id="courseList"><span class="icon-th"></span>课程列表</a>
+        <a iLink="addClass.html" id="addClass"><span class="icon-plus"></span>添加课程</a>
+        <a iLink="videoList.html" id="videoList"><span class="icon-facetime-video"></span>视频管理</a>
+        <a><span class="icon-pencil"></span>课程评价</a>
+      </div>
+    </div>
+    <div class="none">
+      <div class="none_content">
+        <a><span class="icon-book"></span>课程统计</a>
+        <a><span class="icon-group"></span>学员统计</a>
+        <a><span class="icon-globe"></span>访问统计</a>
+      </div>
+    </div>
+    <div class="none">
+      <div class="none_content">
+        <a><span class="icon-envelope-alt"></span>反馈意见</a>
+      </div>
+    </div>
+    <div class="none">
+      <div class="none_content">
+        <a><span class="icon-leaf"></span>常用选项</a>
+        <a><span class="icon-map-marker"></span>地区</a>
+        <a><span class="icon-flag"></span>专业</a>
+      </div>
+    </div>
+    <div class="none">
+      <div class="none_content">
+        <a><span class="icon-cog"></span>系统设置</a>
+        <a><span class="icon-calendar"></span>操作日志</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="backHomeContent"></div>
+</body>
+<!--ext本身的加载速度慢，所以后续需要用到jq里面的方法-->
+<script src="../js/jquery-1.8.3.min.js" type="text/javascript"></script>
+<!--独自封装的js库-->
+<script src="../js/basicParameter.js" type="text/javascript"></script>
+<!--ext-all.js ext自身的js库-->
+<script src="../js/ext-all.js" type="text/javascript"></script>
+<!--自己封装的js组件库-->
+<script src="../js/basicExtModule.js" type="text/javascript"></script>
+<!--分页栏js库-->
+<script src="../js/PagingToolBar.js" type="text/javascript"></script>
+<!--工具库-->
+<script src="../js/tools.js" type="text/javascript"></script>
+<!--清除文本的js库-->
+<script src="../js/ClearButton.js" type="text/javascript"></script>
+<script>
+  var GLOBAL = GLOBAL || {}
+  $(function () {
+    $(".nav_content ul li").hover(function () {
+      $(this).siblings().children(".left").removeClass("active1");
+      $(this).siblings().children(".right").removeClass("active2");
+      $(this).find(".left").addClass("active1");
+      $(this).find(".right").addClass("active2");
+      $(".none").eq($(this).index()).css("display", "block").siblings(".none").css("display", "none");
+    });
+    $(".nav").hover(function () {
+
+    }, function () {
+      $(".none").css("display", "none");
+      $(".nav_content ul li").find(".left").removeClass("active1");
+      $(".nav_content ul li").find(".right").removeClass("active2");
+    });
+
+    $("#quit").click(function () {
+      quit();
+    });
+    $("#checkPwd").click(function () {
+      checkPwd();
+    });
+
+    returnInfo();
+    //点击导航的时候，加载对应页面
+    $(".none_content").delegate("a","click",function () {
+      if ($(this).attr("iLink")){
+        var link = $(this).attr("iLink");
+        var id = $(this).attr("id");
+        var index=$(this).parents(".none").index();
+        var pathName=$(".nav_content li").eq(index).text()+'/'+$(this).text();
+        loadPage(link,id,pathName);
+      }
+    });
+
+    loadHashPage();
+
+  });
+
+  //面包屑导航
+
+  //获取用户信息
+  function returnInfo() {
+    $.ajax({
+      url: "/Handler/AdminHandler.ashx?action=returnuserinfo",
+      type: "post",
+      dataType: "json",
+      data: "",
+      async: false
+    }).done(function (result) {
+      console.log(result.turename);
+      $("#userName").html(result.turename)
+    })
+  }
+  //退出登录
+  function quit() {
+    $.ajax({
+      url: "/Handler/AdminHandler.ashx?action=quit",
+      type: "get",
+      dataType: "json",
+      data: "",
+      async: false
+    }).done(function (result) {
+      alert(result.success);
+      if (result.success) {
+        window.location = "login.html";
+      }
+    })
+  }
+  //修改密码
+  function checkPwd() {
+    GLOBAL.basicwin = new Ext.custom.basicWindow({
+      title: "修改密码",
+      width: 500,
+      height: 320,
+      items: [
+        new Ext.custom.middletextfield({
+          itemId: "oldPwd",
+          fieldLabel: "当前密码",
+          beforeLabelTextTpl: required,
+          margin: "40 10 10 50"
+        }), new Ext.custom.middletextfield({
+          itemId: "newPwd",
+          fieldLabel: "新密码",
+          inputType:"password",
+          beforeLabelTextTpl: required,
+          margin: "20 10 10 50"
+        }), new Ext.custom.middletextfield({
+          itemId: "checkPwd",
+          fieldLabel: "确认密码",
+          inputType:"password",
+          beforeLabelTextTpl: required,
+          margin: "20 10 10 50"
+        }), {
+          xtype: "button",
+          text: "确定",
+          width: 100,
+          height: 34,
+          margin: "10 0 0 120",
+          handler: function () {
+            var date = {
+              userPwd: GLOBAL.basicwin.down("#oldPwd").getValue(),
+              newPwd: GLOBAL.basicwin.down("#newPwd").getValue(),
+              checkPwd:GLOBAL.basicwin.down("#checkPwd").getValue()
+            };
+            if (date.userPwd == "" || date.newPwd == "" || date.userPwd == date.newPwd || date.newPwd != date.checkPwd) {
+              if (date.userPwd == "") {
+                Ext.Msg.alert("提示", "旧密码不能为空")
+              }else if (date.newPwd == "") {
+                Ext.Msg.alert("提示", "新密码不能为空")
+              }else if(date.userPwd == date.newPwd){
+                Ext.Msg.alert("提示","新密码与旧密码不能一致")
+              }else if(date.checkPwd == "") {
+                Ext.Msg.alert("提示","请再次输入密码")
+              }else if(date.newPwd != date.checkPwd){
+                Ext.Msg.alert("提示","两次输入密码不一致")
+              }
+            } else {
+              $.ajax({
+                url: "/Handler/AdminHandler.ashx?action=updatepass",
+                type: "post",
+                data: date,
+                dateType: "json",
+              }).done(function (result) {
+                console.log(result);
+                Ext.Msg.alert("修改成功","修改成功");
+                GLOBAL.basicwin.hide();
+              })
+            }
+          }
+        }, {
+          xtype: "button",
+          text: "取消",
+          width: 100,
+          height: 34,
+          style: "background:green",
+          margin: "10 0 0 50",
+          handler:function () {
+            GLOBAL.basicwin.hide();
+          }
+        }
+      ]
+    }).show();
+  }
+
+  function loadHashPage() {
+    if (window.location.hash){  //如果hash存在，，截取它#号后边的
+      var hashId = window.location.hash.substring(1);
+      if (hashId.length > 0){
+        $("#"+hashId).trigger("click")
+      }else {
+        loadPage("two.html","","")
+      }
+    }else {
+      loadPage("two.html","","")
+    }
+  }
+  //利用动态参数进行页面跳转
+  function loadPage(link,id,pathName) {
+    var h = $(window).height()-100;
+    $("#backHomeContent").html("<iframe src='"+link+"' id='myIframe' width='100%' height='"+h+"' frameborder='0'></iframe>");
+    window.location.hash = id;
+    //面包屑导航
+    $('#myIframe').load(function(){
+      console.log(pathName);
+      $(this).contents().find('.xn_nowpath').html("<a>首页/</a>"+pathName)
+    })
+  }
+  //当window改变的时候改变iframe
+  $(window).resize(function () {
+    $("#myIframe").height($(window).height()-100);
+  })
+</script>
+</html>

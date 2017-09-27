@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--所有ext里面的css样式-->
+    <link href="Ext/css/ext-all.css" rel="stylesheet">
+    <!--font-awesome 字体图标库，现如今最流行的-->
+    <link href="Ext/css/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <!--fc-all.css 根据具体需求写的css-->
+    <link href="Ext/css/fc-all.css" rel="stylesheet">
+    <!--清除文本的css样式库-->
+    <link href="Ext/css/ClearButton.css" rel="stylesheet">
+</head>
+<body class="xn-body">
+<div style="margin:10px 0">----示例----</div>
+<div class="xn_section_wrap">
+    <div class="xn_section_title">
+        <span class="icon_wrap"><i class="icon-th"></i></span>
+        <span class="xn_title_name">列表示例</span>
+    </div>
+    <div id="gridBox"></div>
+</div>
+</body>
+<!--ext本身的加载速度慢，所以后续需要用到jq里面的方法-->
+<script src="Ext/js/jquery-1.8.3.min.js" type="text/javascript"></script>
+<!--独自封装的js库-->
+<script src="Ext/js/basicParameter.js" type="text/javascript"></script>
+<!--ext-all.js ext自身的js库-->
+<script src="Ext/js/ext-all.js" type="text/javascript"></script>
+<!--自己封装的js组件库-->
+<script src="Ext/js/basicExtModule.js" type="text/javascript"></script>
+<!--分页栏js库-->
+<script src="Ext/js/PagingToolBar.js" type="text/javascript"></script>
+<!--工具库-->
+<script src="Ext/js/tools.js" type="text/javascript"></script>
+<!--清除文本的js库-->
+<script src="Ext/js/ClearButton.js" type="text/javascript"></script>
+<script>
+    var GLOBAL = GLOBAL || {};
+    // 预加载
+    Ext.onReady(function () {
+        //解决窗口缩小表格变形的问题
+        Ext.EventManager.onWindowResize(function () {
+            GLOBAL.grid.getView().refresh()
+        });
+        //专业分类数据
+        GLOBAL.classifyData = [
+            {
+                "name": "前端语言",      //专业名称
+                "classifyCode": "1",   //专业分类所对应的专业代号值，唯一
+                "fatherCode": null     //父级的classifyCode，第一级分类没有上级，所以为null
+            }, {
+                "name": "后端语言",
+                "classifyCode": "2",
+                "fatherCode": null
+            }, {
+                "name": "html",
+                "classifyCode": "3",
+                "fatherCode": "1"
+            }, {
+                "name": "css",
+                "classifyCode": "4",
+                "fatherCode": "1"
+            }, {
+                "name": "javascript",
+                "classifyCode": "5",
+                "fatherCode": "1"
+            }, {
+                "name": "java",
+                "classifyCode": "6",
+                "fatherCode": "2"
+            }, {
+                "name": "php",
+                "classifyCode": "7",
+                "fatherCode": "2"
+            }, {
+                "name": "nodejs",
+                "classifyCode": "8",
+                "fatherCode": "2"
+            }
+        ];
+        //一级仓库
+        GLOBAL.goryOne = Ext.create("Ext.data.Store", {
+            fields: ["name", "classifyCode", "fatherCode"]
+        });
+        //二级仓库
+        GLOBAL.goryTwo = Ext.create("Ext.data.Store", {
+            fields: ["name", "classifyCode", "fatherCode"]
+        });
+        //获取一级数据
+        var arr = [];
+        for (var i = 0; i < GLOBAL.classifyData.length; i++) {
+            if (GLOBAL.classifyData[i].fatherCode == null) {
+                arr.push(GLOBAL.classifyData[i]);
+            }
+        }
+        GLOBAL.goryOne.loadData(arr);
+        //表格数据
+        GLOBAL.tableData = [
+            {
+                "title": "html基础1",        //课程名称
+                "nomber": "yysd4568",       //课程代号
+                "courseId": "1",            //课程id
+                "classifyCode": "3",        //课程分类所对应的专业代号值。
+                "updateAt": "2014/05/09",   //编辑日期
+                "createAt": "2014/05/09",   //创建日期
+                "status": 2                 //课程状态
+            }, {
+                "title": "html基础2",
+                "nomber": "yysd4568",
+                "courseId": "2",
+                "classifyCode": "3",
+                "updateAt": "2014/05/09",
+                "createAt": "2014/05/09",
+                "status": 2
+            }, {
+                "title": "html基础3",
+                "nomber": "yysd4568",
+                "courseId": "3",
+                "classifyCode": "3",
+                "updateAt": "2014/05/09",
+                "createAt": "2014/05/09",
+                "status": 2
+            }, {
+                "title": "html基础4",
+                "nomber": "yysd4568",
+                "courseId": "4",
+                "classifyCode": "3",
+                "updateAt": "2014/05/09",
+                "createAt": "2014/05/09",
+                "status": 2
+            }, {
+                "title": "css基础1",
+                "nomber": "yysd4568",
+                "courseId": "5",
+                "classifyCode": "4",
+                "updateAt": "2014/05/09",
+                "createAt": "2014/05/09",
+                "status": 2
+            }, {
+                "title": "css基础2",
+                "nomber": "yysd4568",
+                "courseId": "6",
+                "classifyCode": "4",
+                "updateAt": "2014/05/09",
+                "createAt": "2014/05/09",
+                "status": 2
+            }, {
+                "title": "css基础3",
+                "nomber": "yysd4568",
+                "courseId": "7",
+                "classifyCode": "4",
+                "updateAt": "2014/05/09",
+                "createAt": "2014/05/09",
+                "status": 2
+            }, {
+                "title": "css基础4",
+                "nomber": "yysd4568",
+                "courseId": "8",
+                "classifyCode": "4",
+                "updateAt": "2014/05/09",
+                "createAt": "2014/05/09",
+                "status": 2
+            }, {
+                "title": "css基础5",
+                "nomber": "yysd4568",
+                "courseId": "9",
+                "classifyCode": "4",
+                "updateAt": "2014/05/09",
+                "createAt": "2014/05/09",
+                "status": 2
+            }, {
+                "title": "css基础6",
+                "nomber": "yysd4568",
+                "courseId": "10",
+                "classifyCode": "4",
+                "updateAt": "2014/05/09",
+                "createAt": "2014/05/09",
+                "status": 2
+            }, {
+                "title": "javascript基础",
+                "nomber": "yysd4568",
+                "courseId": "11",
+                "classifyCode": "5",
+                "updateAt": "2014/05/09",
+                "createAt": "2014/05/09",
+                "status": 2
+            }, {
+                "title": "java基础",
+                "nomber": "yysd4568",
+                "courseId": "12",
+                "classifyCode": "6",
+                "updateAt": "2014/05/09",
+                "createAt": "2014/05/09",
+                "status": 2
+            }, {
+                "title": "php基础",
+                "nomber": "yysd4568",
+                "courseId": "13",
+                "classifyCode": "7",
+                "updateAt": "2014/05/09",
+                "createAt": "2014/05/09",
+                "status": 2
+            }, {
+                "title": "nodejs基础1",
+                "nomber": "yysd4568",
+                "courseId": "14",
+                "classifyCode": "8",
+                "updateAt": "2014/05/09",
+                "createAt": "2014/05/09",
+                "status": 2
+            }, {
+                "title": "nodejs基础2",
+                "nomber": "yysd4568",
+                "courseId": "15",
+                "classifyCode": "8",
+                "updateAt": "2014/05/09",
+                "createAt": "2014/05/09",
+                "status": 2
+            }
+        ];
+        //创建仓库
+        GLOBAL.gridStore = Ext.create("Ext.data.Store", {
+            fields: ["title", "nomber", "courseId", "status", "classifyCode", "updateAt", "createAt"]
+        });
+        //创建分页栏
+        GLOBAL.gridBar = Ext.create("PagingToolBar", {
+            onChange: function (g, pageStart) {
+                getShuju(pageStart);
+            }
+        });
+        //创建表格
+        GLOBAL.grid = Ext.create("Ext.grid.Panel", {
+            renderTo: "gridBox",
+            store: GLOBAL.gridStore,
+            bbar: GLOBAL.gridBar,
+            minHeight: BPR.gridMinHeight,
+            columns: [
+                {header: "课程名称", width: 150, dataIndex: "title"},
+                {header: "课程代号", width: 150, dataIndex: "nomber", flex: 1},
+                {
+                    header: "所属专业分类", width: 150, dataIndex: "classifyCode",
+                    renderer: function (value) {
+                        for (var i = 0; i < GLOBAL.classifyData.length; i++) {
+                            if (GLOBAL.classifyData[i].classifyCode == value) {
+                                return GLOBAL.classifyData[i].name
+                            }
+                        }
+                    }
+                },
+                {header: "状态", width: 150, dataIndex: "status"},
+                {header: "编辑日期", width: 150, dataIndex: "createAt"},
+                {
+                    header: "操作", width: 200, dataIndex: "courseId",
+                    renderer: function (value, cellMeta, record) {
+                        return "<a onclick='bianji(" + value + ")' class='xn_tablea'>编辑</a><a onclick='shanchu(" + value + ")' class='xn_tablea'>删除</a>"
+                    }
+                }
+            ]
+        });
+        getShuju();
+    });
+    //获取表格数据
+    function getShuju(pageStart) {
+        var pageStart = pageStart ? pageStart : 0;
+        console.log(pageStart);
+        var arr = [];
+        console.log(arr);
+        if (pageStart < 10) {
+            for (var i = 0; i < GLOBAL.tableData.length - 5; i++) {
+                arr[i] = GLOBAL.tableData[i]
+            }
+        } else {
+            for (var i = 10; i < GLOBAL.tableData.length; i++) {
+                arr[i - 10] = GLOBAL.tableData[i]
+            }
+        }
+        GLOBAL.gridBar.setPageSize(10);
+        GLOBAL.gridBar.loadPage(pageStart, GLOBAL.tableData.length);
+        GLOBAL.gridStore.loadData(arr);
+    }
+    //编辑
+    function bianji(id) {
+        GLOBAL.bianjiWin = new Ext.custom.basicWindow({
+            title: "编辑",
+            width: 500,
+            height: 300,
+            items: [
+                new Ext.custom.middletextfield({
+                    itemId: "className",
+                    margin: "40 0 20 40",
+                    fieldLabel: "课程名称",
+                    beforeLabelTextTpl: required
+                }),
+                new Ext.custom.middletextfield({
+                    itemId: "classNumber",
+                    margin: "0 0 20 40",
+                    fieldLabel: "课程代号",
+                    beforeLabelTextTpl: required
+                }),
+                {
+                    layout: "hbox",
+                    margin: "0 0 20 40",
+                    items: [
+                        new Ext.custom.basicCombo({
+                            itemId: "classFenOne",
+                            fieldLabel: "所属分类",
+                            store: GLOBAL.goryOne,
+                            valueField: "classifyCode",
+                            displayField: "name",
+                            plugins: ["clearbutton"],
+                            listeners: {
+                                change: function (g, value) {
+//                                    alert(1);
+                                    GLOBAL.bianjiWin.down("#classFenTwo").setValue("");
+                                    var arr = [];
+                                    for (var i = 0; i < GLOBAL.classifyData.length; i++) {
+                                        if (GLOBAL.classifyData[i].fatherCode == value) {
+                                            arr.push(GLOBAL.classifyData[i]);
+                                        }
+                                    }
+                                    GLOBAL.goryTwo.loadData(arr);
+                                }
+                            }
+                        }),
+                        new Ext.custom.basicCombo({
+                            itemId: "classFenTwo",
+                            store: GLOBAL.goryTwo,
+                            valueField: "classifyCode",
+                            displayField: "name",
+                            plugins: ["clearbutton"]
+                        })
+                    ]
+                }, {
+                    layout: "hbox",
+                    items: [{
+                        xtype: "button",
+                        text: "确定",
+                        width: 100,
+                        height: 34,
+                        style: "background:green",
+                        margin: "0 40 0 120",
+                        handler: function () {
+                            for (var i=0;i<GLOBAL.tableData.length;i++){
+                                if (GLOBAL.tableData[i].courseId == id){
+                                    GLOBAL.tableData[i].title =  GLOBAL.bianjiWin.down("#className").getValue();
+                                    GLOBAL.tableData[i].nomber =  GLOBAL.bianjiWin.down("#classNumber").getValue();
+                                    GLOBAL.tableData[i].classifyCode =  GLOBAL.bianjiWin.down("#classFenTwo").getValue();
+                                }
+                            }
+                            Ext.Msg.alert("提示","修改成功");
+                            getShuju();
+                            GLOBAL.bianjiWin.hide();
+                        }
+                    }, {
+                        xtype: "button",
+                        text: "取消",
+                        width: 100,
+                        height: 34,
+                        handler: function () {
+                            GLOBAL.bianjiWin.hide();
+                        }
+                    }]
+                }
+            ]
+        }).show();
+        if (id) {
+            var data = GLOBAL.grid.getSelectionModel().getSelection()[0].data;
+            console.log(data.classifyCode);
+
+            GLOBAL.bianjiWin.down("#className").setValue(data.title);
+            GLOBAL.bianjiWin.down("#classNumber").setValue(data.nomber);
+            if (GLOBAL.classifyData[data.classifyCode-1].fatherCode == 1) {
+                var valueOne = GLOBAL.classifyData[0].name;
+                console.log(valueOne);
+                GLOBAL.bianjiWin.down("#classFenOne").setRawValue(valueOne);
+            }else {
+                var valueOne = GLOBAL.classifyData[1].name;
+                GLOBAL.bianjiWin.down("#classFenOne").setRawValue(valueOne);
+            }
+            if (GLOBAL.classifyData[data.classifyCode-1].classifyCode == data.classifyCode) {
+                var valueTwo = GLOBAL.classifyData[data.classifyCode - 1].name;
+                console.log(valueTwo);
+                GLOBAL.bianjiWin.down("#classFenTwo").setRawValue(valueTwo);
+            }
+        }
+    }
+    //删除
+    function shanchu(id) {
+        for (var i = 0; i < GLOBAL.tableData.length; i++) {
+            if (GLOBAL.tableData[i].courseId == id) {
+                GLOBAL.tableData.splice(i, 1);
+            }
+        }
+        Ext.Msg.alert("提示", "删除成功");
+        getShuju();
+    }
+</script>
+</html>

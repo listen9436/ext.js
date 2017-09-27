@@ -1,0 +1,262 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ext.js演示</title>
+  <!--所有ext里面的css样式-->
+  <link href="../css/ext-all.css" rel="stylesheet">
+  <!--font-awesome 字体图标库，现如今最流行的-->
+  <link href="../css/font-awesome/css/font-awesome.css" rel="stylesheet">
+  <!--fc-all.css 根据具体需求写的css-->
+  <link href="../css/fc-all.css" rel="stylesheet">
+  <!--清除文本的css样式库-->
+  <link href="../css/ClearButton.css" rel="stylesheet">
+</head>
+<body class="xn-body"> <!--xn-body内容两边加填充-->
+<div class="xn_nowpath"></div>
+<div class="xn_section_wrap">
+  <div id="searchBox" class="xn_search_form">
+    <button onclick="adminWin()" class="xn_btn xn_btn_primary" style="float: right;margin: 10px;"><i
+      class="icon-plus"></i>添加
+    </button>
+  </div>
+</div>
+<div class="xn_section_wrap">
+  <div class="xn_section_title">
+    <span class="icon_wrap"><i class="icon-th"></i></span>
+    <span class="xn_title_name">系统人员列表</span>
+  </div>
+  <div id="tableBox"></div>
+</div>
+
+</body>
+<!--ext本身的加载速度慢，所以后续需要用到jq里面的方法-->
+<script src="../js/jquery-1.8.3.min.js" type="text/javascript"></script>
+<!--独自封装的js库-->
+<script src="../js/basicParameter.js" type="text/javascript"></script>
+<!--ext-all.js ext自身的js库-->
+<script src="../js/ext-all.js" type="text/javascript"></script>
+<!--自己封装的js组件库-->
+<script src="../js/basicExtModule.js" type="text/javascript"></script>
+<!--分页栏js库-->
+<script src="../js/PagingToolBar.js" type="text/javascript"></script>
+<!--工具库-->
+<script src="../js/tools.js" type="text/javascript"></script>
+<!--清除文本的js库-->
+<script src="../js/ClearButton.js" type="text/javascript"></script>
+<script type="text/javascript">
+  var GLOBAL = GLOBAL || {};
+  Ext.onReady(function () {
+    //搜索框部分
+    GLOBAL.formBox = Ext.create("Ext.form.Panel", {
+      renderTo: "searchBox",
+      margin: 10,
+      layout: "hbox",
+      items: [
+        new Ext.custom.middletextfield({
+          emptyText: "模糊查找，姓名",
+          margin: 10,
+          itemId: "userName"
+        }), {
+          xtype: "button",
+          width: 100,
+          height: 34,
+          text: "搜索",
+          margin: 10,
+          handler: function () {
+            getAdminList();
+          }
+        }]
+    });
+    //表格部分
+    //创建表格仓库
+    GLOBAL.dataStore = Ext.create("Ext.data.Store", {
+      fields: ["userName", "tokenId", "turename", "phone", "power", "createAt", "upDateAt"]
+    });
+    //创建分页栏
+    GLOBAL.pageBar = Ext.create("PagingToolBar", {
+      onChange: function (g, pageFirst, pageSize) {
+        //g 指代表格里所有的数据
+        //pageFirst 指当前页第一条数据的下标
+        //pageSize  每页显示的数据条数
+        var pageStart = parseInt(pageFirst / pageSize + 1);
+        console.log(pageFirst);
+        console.log(pageStart);
+        getAdminList(pageStart, pageFirst);
+      }
+    });
+    //创建表格
+    GLOBAL.gridBox = Ext.create("Ext.grid.Panel", {
+      renderTo: "tableBox",
+      store: GLOBAL.dataStore,
+      minHeight: BPR.gridMinHeight,
+      bbar: GLOBAL.pageBar,
+      columns: [
+        {"header": "用户名", width: 150, dataIndex: "userName"},
+        {"header": "姓名", width: 150, dataIndex: "turename", flex: 1},
+        {"header": "所属分类", width: 150, dataIndex: "power"},
+        {"header": "手机", width: 150, dataIndex: "phone"},
+        {"header": "编辑日期", width: 150, dataIndex: "createAt"},
+        {
+          "header": "操作", width: 200, dataIndex: "tokenId",
+          renderer: function (value, cellMeta, record) {  // renderer重置表格数据
+            //value 单元格的值  cellMeta单元格的信息  record整行记录
+            return "<a class='xn_tablea'  onclick='adminWin(" + value + ")'>编辑</a><a class='xn_tablea' onclick='delAdmin(" + value + ")'>删除</a>"
+          }
+        }
+      ]
+    });
+    //先获取系统人员列表
+    getAdminList();
+    //权限选择仓库
+    GLOBAL.powerStore = Ext.create("Ext.data.Store", {
+      fields: ["power", "powerCode"]
+    });
+    //先获取权限选择
+    getPower();
+  });
+  //获取系统人员列表
+  function getAdminList(pageStart, pageFirst) {
+    var data = {
+      searchText: GLOBAL.formBox.down("#userName").getValue(),
+      pageStart: pageStart ? pageStart : 1
+    };
+    $.ajax({
+      url: "/Handler/AdminHandler.ashx?action=show",
+      type: "get",
+      dataType: "json",
+      async: false,
+      data: data
+    }).done(function (result) {
+//      console.log(result);
+      //添加 页数  和  数据总数
+      GLOBAL.pageBar.setPageSize(result.data.pageSize);
+      GLOBAL.pageBar.loadPage(pageFirst ? pageFirst : 0, result.data.count);
+      //添加到数据库内
+      GLOBAL.dataStore.loadData(result.data.list)
+    })
+  }
+  //添加管理员
+  function adminWin(userId) {
+    GLOBAL.basicWin = new Ext.custom.basicWindow({
+      title: "管理员添加",
+      width: 500,
+      height: 320,
+      items: [
+        new Ext.custom.middletextfield({
+          itemId: "userName",
+          fieldLabel: "用户名",
+          beforeLabelTextTpl: required,
+          margin: "40 0 10 40"
+        }),
+        new Ext.custom.middletextfield({
+          itemId: "name",
+          fieldLabel: "姓名",
+          beforeLabelTextTpl: required,
+          margin: "0 0 10 40"
+        }),
+        new Ext.custom.middletextfield({
+          itemId: "phone",
+          fieldLabel: "手机号",
+          beforeLabelTextTpl: required,
+          margin: "0 0 10 40"
+        }),
+        new Ext.custom.basicCombo({
+          itemId: "power",
+          fieldLabel: "权限选择",
+          valueField: "powerCode",
+          displayField: "power",
+          store: GLOBAL.powerStore,
+          plugins: ["clearbutton"],
+          width: 370,
+          margin: "0 0 10 40"
+        }), {
+          xtype: "button",
+          width: 100,
+          height: 34,
+          text: "确定",
+          margin: "0 30 0 120",
+          handler: function () {
+            //获取数据
+            var url = userId ? "/Handler/AdminHandler.ashx?action=update" : "/Handler/AdminLoginAndRegHandler.ashx?action=add";
+            //如果用户ID存在执行 修改  否则执行 添加
+            $.ajax({
+              url: url,
+              type: "post",
+              dataType: "json",
+              async: false,
+              data: {
+                userName: GLOBAL.basicWin.down('#userName').getValue(),
+                tureName: GLOBAL.basicWin.down('#name').getValue(),
+                phone: GLOBAL.basicWin.down('#phone').getValue(),
+                power: GLOBAL.basicWin.down('#power').getValue(),
+                password: GLOBAL.userId ? "" : "123456",
+                //如果userId存在，密码还是之前的密码，不存在就为123456
+                tokenId: userId
+              }
+            }).done(function (result) {
+              console.log(result);
+              if (result.success){
+                getAdminList();   //刷新表格数据
+                GLOBAL.basicWin.hide();
+              }else {
+                alert(result.err);  //弹出失败原因
+              }
+            })
+          }
+        }, {
+          xtype: "button",
+          width: 100,
+          height: 34,
+          text: "取消",
+          margin: "0 0 0 20",
+          style: "background:green",
+          handler: function () {
+            GLOBAL.basicWin.hide();
+          }
+        }
+      ]
+    }).show();
+    //如果执行的是修改
+    if (userId) {
+      //取到对应的模型数据
+      var adminData = GLOBAL.gridBox.getSelectionModel().getSelection()[0].data;
+      console.log(adminData);
+      //获取要修改的数据(之前添的)
+      GLOBAL.basicWin.down("#userName").setValue(adminData.userName);
+      GLOBAL.basicWin.down("#name").setValue(adminData.turename);
+      GLOBAL.basicWin.down("#phone").setValue(adminData.phone);
+      GLOBAL.basicWin.down("#power").setRawValue(adminData.power);
+      GLOBAL.userId = adminData.tokenId; //让用户ID和之前添加时的一样，（否则就是添加而不是修改了）
+    }
+  }
+  //获取权限
+  function getPower() {
+    $.ajax({
+      url: "/Handler/CourseHandler.ashx?action=getpower",
+      type: "get",
+      async: false,
+      dataType: "json",
+      data: ""
+    }).done(function (result) {
+//      console.log(result);
+      GLOBAL.powerStore.loadData(result.data);
+    })
+  }
+  //删除管理员
+  function delAdmin(userId) {
+    $.ajax({
+      url: "/Handler/AdminHandler.ashx?action=delete",
+      type: "get",
+      datetype: "json",
+      async: false,
+      data: {
+        tokenId: userId
+      }
+    }).done(function () {
+      Ext.Msg.alert("提示", "删除成功");
+      getAdminList();
+    })
+  }
+</script>
+</html>

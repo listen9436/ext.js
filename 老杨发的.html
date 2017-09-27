@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .content{
+            width: 600px;
+            height: 40px;
+            background: #0AA6E8;
+            margin: 0 auto;
+        }
+        .content ul li{
+            list-style: none;
+            float: left;
+            line-height: 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #fff;
+            width: 100px;
+            position: relative;
+        }
+        .content ul li::before,.content ul li::after{
+            width: 10px;
+            height: 10px;
+            position: absolute;
+            opacity: 0;
+            content: " ";
+            transition: all 0.5s ease;
+        }
+        .content ul li::before{
+            left: 15px;
+            top: 10px;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+        }
+        .content ul li::after{
+            right: 15px;
+            bottom: 10px;
+            border-right: 2px solid #fff;
+            border-bottom: 2px solid #fff;
+        }
+        .content ul li:hover::before{
+            left: 0;
+            top: 0;
+            opacity: 1;
+        }
+        .content ul li:hover::after{
+            right: 0;
+            bottom: 0;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<div class="content">
+    <ul>
+        <li>哈哈</li>
+        <li>阿萨德</li>
+        <li>哈哈</li>
+        <li>啦啦</li>
+        <li>吼吼</li>
+        <li>吼吼</li>
+    </ul>
+</div>
+</body>
+</html>

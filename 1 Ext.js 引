@@ -1,0 +1,97 @@
+Ext.js  面向对象的一个框架（javascript）
+优点：   丰富的界面应用， 多种组件结合     丰富的ajax应用
+缺点：   包文件过大，，影响网页加载
+
+
+$.ajax({
+
+    url:"",
+    type:"",
+    dataType:"",  //json   xml     json 轻量级的一个数据传输格式
+                    加快网页的加载速度   优化性能
+    data:"",      //数据包   前端往后台传输数据的时候才会用到
+    async:"",     //true  false   下去自己查  单词全拼
+                    true  异步   两件事情一起做
+                    false 同步   两件事情一件一件做
+    timeout:"" 2000,     //会用2000毫秒的时间去请求完数据
+    success: function(result){
+        执行请求成功后的代码
+    },
+    fail: function(){
+        失败以后执行的代码
+    }
+  }).done(function(){
+
+       完成以后执行的代码
+  })
+
+
+
+
+  Ajax请求，会涉及到问题：
+  1，请求地址前缀 BPR.domain=""
+    192.168.0.3/handle/doLogin?action=login
+            ||
+    BPR.domain="192.168.0.3"
+    BPR.domain+"/handle/doLogin?action=login"
+
+    优点：一个页面当中会涉及到很多ajax请求 ip不同，会增加工作负担。
+    所以需要这种处理方式。（用字符串拼接，只需改一个就全改了）
+
+
+
+    substr和substring的区别?
+    substr() 函数 -- 返回从string的startPos位置，长度为length的字符串
+    substring() 函数 -- 返回字符串的一个子串。传入参数是起始位置和结束位置。（留头不留尾），如果没有end，就取到末尾
+
+
+
+    call和apaly的区别?
+    相同点
+    a） 产生的效果或作用完全相同；
+    b） 至少有一个参数；
+    c） 第一个参数必须有且是一个对象（Object）。
+    区别
+    传递参数的方式。用法上不同，主要是参数不完全同
+    apply：最多只能有两个参数——新this对象和一个数组 argArray。如果给该方法传递多个参数，则把参数都写进这个数组里面，当然，即使只有一个参数，也要写进数组里面。如果 argArray 不是一个有效的数组或者不是 arguments 对象，那么将导致一个 TypeError。如果没有提供 argArray 和 thisObj 任何一个参数，那么 Global 对象将被用作 thisObj， 并且无法被传递任何参数。
+    call：则是直接的参数列表，主要用在js对象各方法互相调用的时候，使当前this实例指针保持一致,或在特殊情况下需要改变this指针。如果没有提供 thisObj 参数，那么 Global 对象被用作 thisObj。
+    更简单地说，apply和call功能一样，只是传入的参数列表形式不同：如 func.call(func1,var1,var2,var3)对应的apply写法为：func.apply(func1,[var1,var2,var3])
+
+
+    window.location下面的字段?
+    search 查询地址栏相应的字段
+    history 查询上一次的页面
+    href  链接跳转
+    hash  获取#后面的字段
+    host  返回当前url的端口号
+    port  前url的端口号
+
+
+    flex:  弹性比例布局   自动查询盒子的宽度，如果没有填充满的话，自动占据
+    所空隙的位置。
+
+
+
+                    Ext
+                     |
+                     |
+                     |
+                     |              固定语法（ext）
+                   panel               |
+                     |      需要的组件   |
+                     |         |       |
+                     |         |       |
+                     v         v       v
+             ext.create("ext.panel.Panel",{ })
+                                           |
+                                           |
+                                           |
+                                           v
+  1,加入到相应盒子中（必须以ID为引导）<-------后续语法代码
+  2,设置相应的样式---title:" ",margin:" "
+  3,设置相应的子类---items:[{   }]
+                           |
+                           |
+                           |  给子类设置样式
+                           v——————————————> 2
+  4,布局方式----layout:  hbox  table  fit
